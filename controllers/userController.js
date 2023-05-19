@@ -1,8 +1,9 @@
 const asyncHandler = require('express-async-handler')
-const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
-const User = require('../models/userModel')
+const { findOneUser, createOneUser } = require('../services/userServices');
+const { hashPassword, verifyPassword } = require('../utils/hashing');
+const { createJwtToken } = require('../utils/jwt');
 require('dotenv').config();
+
 
 //@desc Register Users
 //@route GET /api/users/register
@@ -11,29 +12,27 @@ require('dotenv').config();
 const registerUser = asyncHandler(async (req, res) => {
     const { username, email, password } = req.body;
     if (!username || !email || !password) {
-        res.status(400);
-        throw new Error("Not found")
+        res.status(400).json({
+            message: "Not found"
+        });;
     }
-    const userAvailable = await User.findOne({ email: email });
+    const userAvailable = findOneUser(email);
     if (userAvailable) {
-        res.status(400);
-        throw new Error("Email id registered")
+        res.status(400).json({
+            message: "Email id registered"
+        });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    console.log(hashedPassword);
+    const hashedPassword = hashPassword(password);
 
-    const user = await User.create({
-        username: username,
-        email: email,
-        password: hashedPassword
-    })
+    const user = createOneUser(username, email, hashedPassword);
 
-    if(user){
-        res.status(200).json({id:user.id, email: user.email});
+    if (user) {
+        res.status(200).json({ id: user.id, email: user.email });
     } else {
-        res.status(400);
-        throw new Error("Data not valid")
+        res.status(400).json({
+            message: "Data not valid"
+        });
     }
     res.end();
 
@@ -45,47 +44,30 @@ const registerUser = asyncHandler(async (req, res) => {
 
 const loginUser = asyncHandler(async (req, res) => {
     console.log("Request body is : ", req.body)
-    const {email, password} = req.body;
-    if (!email || !password){
-        res.status(400);
-        throw new Error("All fields are mandatory");
+    const { email, password } = req.body;
+    if (!email || !password) {
+        res.status(400).json({
+            message: "All fields are mandatory"
+        });;
     }
-    const user = await User.findOne({email: email})
-    
-    if(user && await bcrypt.compare(password, user.password)){
-        const accessToken = jwt.sign({
-            user: {
-                username: user.username,
-                email: user.email,
-                id: user.id
-            },
-        }, 
-        process.env.ACCESS_TOKEN,
-        { expiresIn: "20m" }
-        );
+    const user = findOneUser(email);
+
+    if (user && verifyPassword(password, user.password)) {
+        const accessToken = createJwtToken(user.username,user.email,user.id);
         res.status(200).json({ accessToken })
     } else {
-        res.status(400);
-        throw new Error("Email or Password is not valid");
+        res.status(400).json({
+            message: "Email or Password is not valid"
+        });;
     }
-   
+
 })
 
 //@desc Get Current User Info
-//@route PUT /api/users/current
+//@route Get /api/users/current
 //@acsess private
 
 const currentUser = asyncHandler(async (req, res) => {
-
-    // const contact = await Contact.findById(req.params.id);
-    // if(!contact){
-    //     res.status(404);
-    //     throw new Error("No such contact");
-    // }
-    // const updated = await Contact.findByIdAndUpdate(req.params.id, req.body)
-    // res.status(200).json(updated);
-    // res.end();
-
     res.json(req.user)
 })
 
