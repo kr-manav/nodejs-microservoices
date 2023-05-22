@@ -1,8 +1,48 @@
 const asyncHandler = require('express-async-handler');
 const { findOneOrderById, findOrdersByCID, createOneOrder, findOneOrderByIdAndUpdate, deleteOneOrder } = require('../services/orderServices');
-const { decreaseQuantity, priceOfProduct } = require('./productController');
 require('dotenv').config();
+const { findOneProductById, findOneProductByIdAndUpdate } = require('../services/productServices')
 
+
+const decreaseQuantity = async (pid, quantity) => {
+    const product = await findOneProductById(pid);
+
+    if (product) {
+        if(product.quantity - quantity >= 0){
+            await findOneProductByIdAndUpdate(pid, {quantity: product.quantity - quantity})
+        } else {
+            throw new Error("Product out of stock");
+        }
+    } else {
+        throw new Error("Product not found");
+    }
+}
+
+const priceOfProduct = async (pid) => {
+    const product = await findOneProductById(pid);
+
+    if (product) {
+        return product.price;
+    } else {
+        throw new Error("Product not found");
+    }
+}
+
+
+//@desc Orders List
+//@route Get /api/orders/
+//@acsess private
+
+const getOrders = async (req, res) => {
+    const orders = await findOrdersByCID(req.customer.id);
+    if(orders){
+        res.setHeader({'Content-type': 'text/json'}).status(200).json(orders);
+    } else {
+        res.setHeader('Content-type', 'text/json').status(400).json({
+            message: "No orders found"
+        });;
+    } 
+}
 
 //@desc Create Order
 //@route POST /api/orders/create
@@ -66,17 +106,5 @@ const deleteOrder = asyncHandler(async (req, res) => {
     }
 
 })
-
-const getOrders = async (req, res) => {
-    const orders = await findOrdersByCID(req.customer.id);
-    if(orders){
-        res.setHeader('Content-type', 'text/json').status(200).json(orders);
-    } else {
-        res.setHeader('Content-type', 'text/json').status(400).json({
-            message: "No orders found"
-        });;
-    } 
-}
-
 
 module.exports = { getOrders, placeOrder, editOrder, deleteOrder }

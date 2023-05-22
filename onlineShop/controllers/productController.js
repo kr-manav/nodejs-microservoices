@@ -64,29 +64,4 @@ const deleteProduct = asyncHandler(async (req, res) => {
 
 });
 
-const decreaseQuantity = async (pid, quantity) => {
-    const product = await findOneProductById(pid);
-
-    if (product) {
-        if(product.quantity - quantity >= 0){
-            await findOneProductByIdAndUpdate(pid, {quantity: product.quantity - quantity})
-        } else {
-            throw new Error("Product out of stock");
-        }
-    } else {
-        throw new Error("Product not found");
-    }
-}
-
-const priceOfProduct = async (pid) => {
-    const product = await findOneProductById(pid);
-
-    if (product) {
-        return product.price;
-    } else {
-        throw new Error("Product not found");
-    }
-}
-
-
-module.exports = { createProduct, editProduct, deleteProduct, decreaseQuantity, priceOfProduct }
+module.exports = { createProduct, editProduct, deleteProduct }
