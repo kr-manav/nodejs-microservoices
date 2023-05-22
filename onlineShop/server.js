@@ -1,7 +1,7 @@
 const express = require('express');
 require('dotenv').config();
 const {connectDb} = require('./config/dbConnection')
-// const errorHandler = require("./middleware/errorHandler");
+const errorHandler = require("./middleware/errorHandler");
 const port = process.env.PORT;
 
 const app = express();
@@ -11,7 +11,7 @@ app.use("/api/customers", require("./routes/customerRoute"));
 app.use("/api/products", require("./routes/productRoute"));
 app.use("/api/orders", require("./routes/orderRoute"));
 
-// app.use(errorHandler);
+app.use(errorHandler);
 
 app.listen(port, () => {
     console.log("Server running on port ", port);
