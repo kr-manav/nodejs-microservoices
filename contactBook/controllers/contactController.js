@@ -6,7 +6,7 @@ const { findOneContactById, createOneContact, findOneContactByIdAndUpdate, delet
 //@access private
 
 const getContact = asyncHandler(async (req, res) => {
-    const contacts = findOneContactById(req.user.id);
+    const contacts = await findOneContactById(req.user.id);
     res.status(200).json(contacts);
 });
 
@@ -22,7 +22,7 @@ const createContact = asyncHandler(async (req, res) => {
             message:"All fields are mandatory"
         });
     }
-    const contactObj = createOneContact(name,email,phone,req.user.id);
+    const contactObj = await createOneContact(name,email,phone,req.user.id);
     res.status(200).json(contactObj);
 })
 
@@ -31,18 +31,19 @@ const createContact = asyncHandler(async (req, res) => {
 //@access private
 
 const updateContact = asyncHandler(async (req, res) => {
-    const contact = findOneContactById(req.params.id);
+    const contact = await findOneContactById(req.params.id);
     if(!contact){
         res.status(400).json({
             message: "No such contact"
         });
     }
+        
     if (contact.user_id.toString() !== req.user.id){
         res.status(400).json({
             message: "user don't have permission to delete other user's contacts"
         })
     }
-    const updated = findOneContactByIdAndUpdate(req.params.id, req.body)
+    const updated = await findOneContactByIdAndUpdate(req.params.id, req.body)
     res.status(200).json(updated);
 })
 
@@ -51,7 +52,7 @@ const updateContact = asyncHandler(async (req, res) => {
 //@access private
 
 const deleteContact = asyncHandler(async (req, res) => {
-    const contact = findOneContactById(req.params.id);
+    const contact = await findOneContactById(req.params.id);
     if(!contact){
         res.status(404);
         throw new Error("No such contact");
@@ -61,7 +62,7 @@ const deleteContact = asyncHandler(async (req, res) => {
             message: "user don't have permission to delete other user's contacts"
         })
     } 
-    deleteOneContact(req.params.id);
+    await deleteOneContact(req.params.id);
     res.status(200).json(contact);
 })
 

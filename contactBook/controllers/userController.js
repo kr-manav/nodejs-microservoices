@@ -16,16 +16,16 @@ const registerUser = asyncHandler(async (req, res) => {
             message: "Not found"
         });;
     }
-    const userAvailable = findOneUser(email);
+    const userAvailable = await findOneUser(email);
     if (userAvailable) {
         res.status(400).json({
             message: "Email id registered"
         });
     }
 
-    const hashedPassword = hashPassword(password);
+    const hashedPassword = await hashPassword(password);
 
-    const user = createOneUser(username, email, hashedPassword);
+    const user = await createOneUser(username, email, hashedPassword);
 
     if (user) {
         res.status(200).json({ id: user.id, email: user.email });
@@ -50,10 +50,10 @@ const loginUser = asyncHandler(async (req, res) => {
             message: "All fields are mandatory"
         });;
     }
-    const user = findOneUser(email);
+    const user = await findOneUser(email);
 
-    if (user && verifyPassword(password, user.password)) {
-        const accessToken = createJwtToken(user.username,user.email,user.id);
+    if (user && await verifyPassword(password, user.password)) {
+        const accessToken = await createJwtToken(user.username,user.email,user.id);
         res.status(200).json({ accessToken })
     } else {
         res.status(400).json({

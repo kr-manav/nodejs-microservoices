@@ -2,7 +2,7 @@ require('dotenv').config();
 const Contact = require('../models/contactModel')
 
 const findOneContactById = async (id) => {
-    return await Contact.find({user_id: id});
+    return await Contact.findOne({_id: id});
 }
 
 const createOneContact = async (name, email, phone, id) => {
