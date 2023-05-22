@@ -66,13 +66,12 @@ const loginCustomer = asyncHandler(async (req, res) => {
 
 //@desc Users Edit
 //@route PUT /api/customers/edit
-//@acsess public
+//@acsess private
 
 const editCustomer = asyncHandler(async (req, res) => {
     const customer = await findOneCustomerById({ _id: req.params.id });
 
     if (customer) {
-        console.log("🚀 ~ file: customerController.js:75 ~ editCustomer ~ customer:", customer)
         const { name, email, phone, address, password } = req.body;
         if (!name || !email || !password || !phone || !address) {
             res.status(400).json({
@@ -97,7 +96,7 @@ const editCustomer = asyncHandler(async (req, res) => {
 
 //@desc Users Delete
 //@route DELETE /api/customers/delete
-//@acsess public
+//@acsess private
 
 const deleteCustomer = asyncHandler(async (req, res) => {
     const customer = await findOneCustomerById(req.params.id);
