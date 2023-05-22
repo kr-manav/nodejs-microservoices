@@ -8,13 +8,23 @@ const decreaseQuantity = async (pid, quantity) => {
     const product = await findOneProductById(pid);
 
     if (product) {
-        if(product.quantity - quantity >= 0){
-            await findOneProductByIdAndUpdate(pid, {quantity: product.quantity - quantity})
-        } else {
-            throw new Error("Product out of stock");
-        }
+        await findOneProductByIdAndUpdate(pid, {quantity: product.quantity - quantity})
     } else {
         throw new Error("Product not found");
+    }
+}
+
+const checkQuantity = async(pid, quantity) => {
+    const product = await findOneProductById(pid);
+
+    if (product) {
+        if(product.quantity - quantity >= 0){
+            return true
+        } else {
+            return false
+        }
+    } else {
+        return false
     }
 }
 
@@ -57,20 +67,22 @@ const placeOrder = asyncHandler(async (req, res) => {
         });
         return
     }
-
-    const productAmt = await priceOfProduct(pid);
-    const orderAmount = quantity * productAmt;
-    
-    const order = await createOneOrder(quantity, orderAmount, deliveryDone, deliveryDate, deliveryAddress, receiverPhone, paymentMethod, req.customer.id, pid);
-    if (order) {
-        res.setHeader('Content-type', 'text/json').status(200).json({ id: order._id, cid: req.customer.id, pid: pid });
-    } else {
-        res.setHeader('Content-type', 'text/json').status(400).json({
-            message: "Data not valid"
-        });
+    if(await checkQuantity(pid, quantity)){
+        const productAmt = await priceOfProduct(pid);
+        const orderAmount = quantity * productAmt;
+        
+        const order = await createOneOrder(quantity, orderAmount, deliveryDone, deliveryDate, deliveryAddress, receiverPhone, paymentMethod, req.customer.id, pid);
+        if (order) {
+            res.setHeader('Content-type', 'text/json').status(200).json({ id: order._id, cid: req.customer.id, pid: pid });
+        } else {
+            res.setHeader('Content-type', 'text/json').status(400).json({
+                message: "Data not valid"
+            });
+        }
+        res.end();
+        await decreaseQuantity(pid, quantity);
     }
-    res.end();
-    await decreaseQuantity(pid, quantity);
+    
 });
 
 
