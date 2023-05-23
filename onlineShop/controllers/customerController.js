@@ -18,7 +18,7 @@ const registerCustomer = asyncHandler(async (req, res) => {
     const customerAvailable = await findOneCustomerByEmail(email);
 
     if (customerAvailable) {
-        res.setHeader('Content-type', 'text/json').status(400).json({
+        res.status(400).json({
             message: "Email id registered"
         });
         return
@@ -29,9 +29,9 @@ const registerCustomer = asyncHandler(async (req, res) => {
     const customer = await createOneCustomer(name, email, phone, address, hashedPassword);
 
     if (customer) {
-        res.setHeader('Content-type', 'text/json').status(200).json({ id: customer._id, email: customer.email });
+        res.status(200).json({ id: customer._id, email: customer.email });
     } else {
-        res.setHeader('Content-type', 'text/json').status(400).json({
+        res.status(400).json({
             message: "Data not valid"
         });
     }
@@ -47,17 +47,17 @@ const loginCustomer = asyncHandler(async (req, res) => {
     console.log("Request body is : ", req.body)
     const { email, password } = req.body;
     if (!email || !password) {
-        res.setHeader('Content-type', 'text/json').status(400).json({
+        res.status(400).json({
             message: "All fields are mandatory"
         });
     }
     const customer = await findOneCustomerByEmail(email);
-
+    
     if (customer && await verifyPassword(password, customer.password)) {
         const accessToken = createJwtToken(customer.name, customer.email, customer._id);
-        res.setHeader('Content-type', 'text/json').status(200).json({ accessToken })
+        res.status(200).json({ accessToken })
     } else {
-        res.setHeader('Content-type', 'text/json').status(400).json({
+        res.status(400).json({
             message: "Email or Password is not valid"
         });
     }
@@ -78,16 +78,26 @@ const editCustomer = asyncHandler(async (req, res) => {
                 message: "Not found"
             });
         }
+
+        
         if(customer._id.toString() == req.customer.id){
+            const customerAvailable = await findOneCustomerByEmail(email);
+
+            if (customerAvailable) {
+                res.status(400).json({
+                    message: "Email id registered"
+                });
+                return
+            }
             const updated = await findOneCustomerByIdAndUpdate(req.params.id, req.body)
-            res.setHeader('Content-type', 'text/json').status(200).json(updated);    
+            res.status(200).json(updated);    
         } else {
-            res.setHeader('Content-type', 'text/json').status(400).json({
+            res.status(400).json({
                 message: "Not valid customer"
             });
         }
     } else {
-        res.setHeader('Content-type', 'text/json').status(400).json({
+        res.status(400).json({
             message: "Email or Password is not valid"
         });
     }
@@ -103,9 +113,9 @@ const deleteCustomer = asyncHandler(async (req, res) => {
 
     if (customer && customer._id.toString() == req.customer.id) {
         await deleteOneCustomer(req.params.id);
-        res.setHeader('Content-type', 'text/json').status(200).json(customer);;
+        res.status(200).json(customer);;
     } else {
-        res.setHeader('Content-type', 'text/json').status(400).json({
+        res.status(400).json({
             message: "Customer Not Found"
         });;
     }
@@ -117,7 +127,7 @@ const deleteCustomer = asyncHandler(async (req, res) => {
 //@acsess private
 
 const currentUser = asyncHandler(async (req, res) => {
-    res.setHeader('Content-type', 'text/json').json(req.customer)
+    res.json(req.customer)
 })
 
 

@@ -46,9 +46,9 @@ const priceOfProduct = async (pid) => {
 const getOrders = async (req, res) => {
     const orders = await findOrdersByCID(req.customer.id);
     if(orders){
-        res.setHeader('Content-type', 'text/json').status(200).json(orders);
+        res.status(200).json(orders);
     } else {
-        res.setHeader('Content-type', 'text/json').status(400).json({
+        res.status(400).json({
             message: "No orders found"
         });;
     } 
@@ -62,7 +62,7 @@ const placeOrder = asyncHandler(async (req, res) => {
     const { pid, quantity, deliveryDone, deliveryDate, deliveryAddress, receiverPhone, paymentMethod} = req.body;
     
     if (!pid || !deliveryDone || !deliveryDate || !deliveryAddress || !receiverPhone || !paymentMethod || !quantity) {
-        res.setHeader('Content-type', 'text/json').status(400).json({
+        res.status(400).json({
             message: "Not found"
         });
         return
@@ -73,9 +73,9 @@ const placeOrder = asyncHandler(async (req, res) => {
         
         const order = await createOneOrder(quantity, orderAmount, deliveryDone, deliveryDate, deliveryAddress, receiverPhone, paymentMethod, req.customer.id, pid);
         if (order) {
-            res.setHeader('Content-type', 'text/json').status(200).json({ id: order._id, cid: req.customer.id, pid: pid });
+            res.status(200).json({ id: order._id, cid: req.customer.id, pid: pid });
         } else {
-            res.setHeader('Content-type', 'text/json').status(400).json({
+            res.status(400).json({
                 message: "Data not valid"
             });
         }
@@ -95,7 +95,7 @@ const editOrder = asyncHandler(async (req, res) => {
 
     if (order) {
         const updated = await findOneOrderByIdAndUpdate(req.params.id, req.body)
-        res.setHeader('Content-type', 'text/json').status(200).json(updated);
+        res.status(200).json(updated);
     }
 
 })
@@ -109,9 +109,9 @@ const deleteOrder = asyncHandler(async (req, res) => {
 
     if (order) {
         await deleteOneOrder(req.params.id);
-        res.setHeader('Content-type', 'text/json').status(200).json(order);
+        res.status(200).json(order);
     } else {
-        res.setHeader('Content-type', 'text/json').status(400).json({
+        res.status(400).json({
             message: "Order Not Found"
         });
     }

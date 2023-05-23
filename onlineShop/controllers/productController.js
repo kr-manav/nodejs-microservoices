@@ -10,7 +10,7 @@ require('dotenv').config();
 const createProduct = asyncHandler(async (req, res) => {
     const { title, image, description, quantity, price, cod, color, delivery} = req.body;
     if (!title || !image || !description || !quantity || !cod || !color || !delivery || !price) {
-        res.setHeader('Content-type', 'text/json').status(400).json({
+        res.status(400).json({
             message: "Not found"
         });;
     }
@@ -18,9 +18,9 @@ const createProduct = asyncHandler(async (req, res) => {
     const product = await createOneProduct(title, image, description, quantity, price, cod, color, delivery, req.customer.id);
 
     if (product) {
-        res.setHeader('Content-type', 'text/json').status(200).json({ id: product._id, title: product.title, cid: req.customer.id });
+        res.status(200).json({ id: product._id, title: product.title, cid: req.customer.id });
     } else {
-        res.setHeader('Content-type', 'text/json').status(400).json({
+        res.status(400).json({
             message: "Data not valid"
         });
     }
@@ -39,7 +39,7 @@ const editProduct = asyncHandler(async (req, res) => {
 
     if (product) {
         const updated = await findOneProductByIdAndUpdate(req.params.id, req.body)
-        res.setHeader('Content-type', 'text/json').status(200).json(updated);
+        res.status(200).json(updated);
     }
 
 })
@@ -54,9 +54,9 @@ const deleteProduct = asyncHandler(async (req, res) => {
 
     if (product) {
         await deleteOneProduct(req.params.id);
-        res.setHeader('Content-type', 'text/json').status(200).json(product);
+        res.status(200).json(product);
     } else {
-        res.setHeader('Content-type', 'text/json').status(400).json({
+        res.status(400).json({
             message: "Product Not Found"
         });;
     }
