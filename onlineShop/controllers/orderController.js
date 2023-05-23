@@ -46,7 +46,7 @@ const priceOfProduct = async (pid) => {
 const getOrders = async (req, res) => {
     const orders = await findOrdersByCID(req.customer.id);
     if(orders){
-        res.setHeader({'Content-type': 'text/json'}).status(200).json(orders);
+        res.setHeader('Content-type', 'text/json').status(200).json(orders);
     } else {
         res.setHeader('Content-type', 'text/json').status(400).json({
             message: "No orders found"
@@ -79,7 +79,6 @@ const placeOrder = asyncHandler(async (req, res) => {
                 message: "Data not valid"
             });
         }
-        res.end();
         await decreaseQuantity(pid, quantity);
     }
     
@@ -96,7 +95,7 @@ const editOrder = asyncHandler(async (req, res) => {
 
     if (order) {
         const updated = await findOneOrderByIdAndUpdate(req.params.id, req.body)
-        res.setHeader('Content-type', 'text/json').setHeader('Content-type', 'text/json').status(200).json(updated);
+        res.setHeader('Content-type', 'text/json').status(200).json(updated);
     }
 
 })

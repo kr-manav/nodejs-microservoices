@@ -6,7 +6,7 @@ const { findOneContactById, createOneContact, findOneContactByIdAndUpdate, delet
 //@access private
 
 const getContact = asyncHandler(async (req, res) => {
-    const contacts = await findOneContactById(req.user.id);
+    const contacts = await findOneContactById(req.params.id);
     res.status(200).json(contacts);
 });
 

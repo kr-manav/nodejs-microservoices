@@ -35,12 +35,10 @@ const createProduct = asyncHandler(async (req, res) => {
 //@acsess private
 
 const editProduct = asyncHandler(async (req, res) => {
-    const product= await findOneProductById({_id: req.params.id});
-    console.log("🚀 ~ file: productController.js:39 ~ editProduct ~ product:", product)
+    const product= await findOneProductById(req.params.id);
 
     if (product) {
         const updated = await findOneProductByIdAndUpdate(req.params.id, req.body)
-        console.log("🚀 ~ file: productController.js:43 ~ editProduct ~ updated:", updated)
         res.setHeader('Content-type', 'text/json').status(200).json(updated);
     }
 
@@ -51,6 +49,7 @@ const editProduct = asyncHandler(async (req, res) => {
 //@acsess private
 
 const deleteProduct = asyncHandler(async (req, res) => {
+    console.log('1')
     const product = await findOneProductById(req.params.id);
 
     if (product) {
