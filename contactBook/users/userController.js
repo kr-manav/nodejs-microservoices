@@ -1,5 +1,5 @@
 const asyncHandler = require('express-async-handler')
-const { findOneUser, createOneUser } = require('../services/userServices');
+const { findOneUser, createOneUser } = require('./userServices');
 const { hashPassword, verifyPassword } = require('../utils/hashing');
 const { createJwtToken } = require('../utils/jwt');
 require('dotenv').config();

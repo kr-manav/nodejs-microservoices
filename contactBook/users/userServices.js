@@ -1,4 +1,4 @@
-const User = require('../models/userModel')
+const User = require('./userModel')
 require('dotenv').config();
 
 const findOneUser = async (email) => {

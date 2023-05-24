@@ -1,5 +1,5 @@
 require('dotenv').config();
-const Contact = require('../models/contactModel')
+const Contact = require('./contactModel')
 
 const findOneContactById = async (id) => {
     return await Contact.findOne({_id: id});
