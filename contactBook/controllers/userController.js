@@ -43,7 +43,6 @@ const registerUser = asyncHandler(async (req, res) => {
 //@acsess public
 
 const loginUser = asyncHandler(async (req, res) => {
-    console.log("Request body is : ", req.body)
     const { email, password } = req.body;
     if (!email || !password) {
         res.status(400).json({

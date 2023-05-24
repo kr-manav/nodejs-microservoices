@@ -1,4 +1,4 @@
-const Product = require('../models/productModel')
+const Product = require('./productModel')
 require('dotenv').config();
 
 const findOneProductById = async (id) => {
@@ -22,7 +22,11 @@ const createOneProduct = async (title, image, description, quantity, price, cod,
 }
 
 const findOneProductByIdAndUpdate = async (id, updateValue) => {
-    return await Product.findByIdAndUpdate(id, updateValue)
+    try {
+        return await Product.findByIdAndUpdate(id, updateValue)
+    } catch (e) {
+        console.log("🚀 ~ file: productServices.js:30 ~ findOneProductByIdAndUpdate ~ e:", e)
+    }
 }
 
 const deleteOneProduct = async (id) => {

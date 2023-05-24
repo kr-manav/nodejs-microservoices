@@ -15,7 +15,6 @@ const getContact = asyncHandler(async (req, res) => {
 //@access private
 
 const createContact = asyncHandler(async (req, res) => {
-    console.log("Request body is : ", req.body)
     const {name, email, phone} = req.body;
     if (!name || !email || !phone){
         res.status(400).json({

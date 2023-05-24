@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {registerCustomer, loginCustomer, editCustomer, deleteCustomer, currentUser} = require("../controllers/customerController");
+const {registerCustomer, loginCustomer, editCustomer, deleteCustomer, currentUser} = require("./customerController");
 const { validateToken } = require('../middleware/validateTokenHandler');
 
 // router.use(validateToken);

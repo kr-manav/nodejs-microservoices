@@ -1,12 +1,14 @@
 require('dotenv').config();
-const Customers = require('../models/customerModel')
+const Customers = require('./customerModel')
+// const mongoose = require('../config/dbConnection');
+// const client = require('../config/dbConnection')
 
 const findOneCustomerById = async (id) => {
-    return await Customers.findOne({_id: id});
+    return await Customers.findOne({ _id: id });
 }
 
 const findOneCustomerByEmail = async (email) => {
-    return await Customers.findOne({email: email});
+    return await Customers.findOne({ email: email });
 }
 
 const createOneCustomer = async (name, email, phone, address, password) => {
@@ -16,7 +18,7 @@ const createOneCustomer = async (name, email, phone, address, password) => {
         phone,
         address,
         password,
-        
+
     })
 }
 
@@ -25,11 +27,11 @@ const findOneCustomerByIdAndUpdate = async (id, updateValue) => {
 }
 
 const deleteOneCustomer = async (id) => {
-    return await Customers.deleteOne({_id: id});
+    return await Customers.deleteOne({ _id: id });
 }
 
 module.exports = {
-    findOneCustomerById, 
+    findOneCustomerById,
     createOneCustomer,
     findOneCustomerByIdAndUpdate,
     deleteOneCustomer,

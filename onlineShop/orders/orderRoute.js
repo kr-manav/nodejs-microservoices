@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {getOrders, placeOrder, editOrder, deleteOrder} = require("../controllers/orderController");
+const {getOrders, placeOrder, editOrder, deleteOrder} = require("./orderController");
 const { validateToken } = require('../middleware/validateTokenHandler');
 
 router.use(validateToken);

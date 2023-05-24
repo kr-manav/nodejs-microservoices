@@ -1,4 +1,4 @@
-const Orders = require('../models/orderModel')
+const Orders = require('./orderModel')
 require('dotenv').config();
 
 const findOneOrderById = async (id) => {

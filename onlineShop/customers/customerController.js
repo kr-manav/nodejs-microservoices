@@ -1,5 +1,5 @@
 const asyncHandler = require('express-async-handler');
-const { deleteOneCustomer, findOneCustomerById, findOneCustomerByIdAndUpdate, findOneCustomerByEmail, createOneCustomer } = require('../services/customerServices');
+const { deleteOneCustomer, findOneCustomerById, findOneCustomerByIdAndUpdate, findOneCustomerByEmail, createOneCustomer } = require('./customerServices');
 const { hashPassword, verifyPassword } = require('../utils/hashing')
 const { createJwtToken } = require('../utils/jwt')
 require('dotenv').config();
@@ -44,7 +44,6 @@ const registerCustomer = asyncHandler(async (req, res) => {
 //@acsess public
 
 const loginCustomer = asyncHandler(async (req, res) => {
-    console.log("Request body is : ", req.body)
     const { email, password } = req.body;
     if (!email || !password) {
         res.status(400).json({
@@ -79,18 +78,19 @@ const editCustomer = asyncHandler(async (req, res) => {
             });
         }
 
-        
-        if(customer._id.toString() == req.customer.id){
-            const customerAvailable = await findOneCustomerByEmail(email);
 
-            if (customerAvailable) {
-                res.status(400).json({
-                    message: "Email id already present, cannot update email field"
-                });
-                return
+        if (customer._id.toString() == req.customer.id) {
+            const customerAvailable = await findOneCustomerByEmail(email);
+            if (email != customerAvailable.email) {
+                if (customerAvailable) {
+                    res.status(400).json({
+                        message: "Email id already present, cannot update email field"
+                    });
+                    return
+                }
             }
             const updated = await findOneCustomerByIdAndUpdate(req.params.id, req.body)
-            res.status(200).json(updated);    
+            res.status(200).json(updated);
         } else {
             res.status(400).json({
                 message: "Not valid customer"
@@ -98,7 +98,7 @@ const editCustomer = asyncHandler(async (req, res) => {
         }
     } else {
         res.status(400).json({
-            message: "Email or Password is not valid"
+            message: "No such customer found"
         });
     }
 
