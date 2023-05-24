@@ -80,8 +80,11 @@ const placeOrder = asyncHandler(async (req, res) => {
             });
         }
         await decreaseQuantity(pid, quantity);
-    }
-    
+    }else {
+        res.status(400).json({
+            message: "Not enough Quantity"
+        });
+    } 
 });
 
 

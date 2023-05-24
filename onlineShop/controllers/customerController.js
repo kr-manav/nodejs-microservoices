@@ -85,7 +85,7 @@ const editCustomer = asyncHandler(async (req, res) => {
 
             if (customerAvailable) {
                 res.status(400).json({
-                    message: "Email id registered"
+                    message: "Email id already present, cannot update email field"
                 });
                 return
             }
