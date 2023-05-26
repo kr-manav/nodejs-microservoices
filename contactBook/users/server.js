@@ -1,7 +1,7 @@
 const express = require('express');
 require('dotenv').config();
 const mongoose = require('mongoose')
-const errorHandler = require("../middleware/errorHandler");
+const errorHandler = require("./middleware/errorHandler");
 
 const port = process.env.USER_PORT;
 mongoose.connect(process.env.CONNECTION_STRING, {
