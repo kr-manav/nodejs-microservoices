@@ -10,32 +10,35 @@ require('dotenv').config();
 //@acsess public
 
 const registerUser = asyncHandler(async (req, res) => {
-    const { username, email, password } = req.body;
-    if (!username || !email || !password) {
-        res.status(400).json({
-            message: "Not found"
-        });;
+    try {
+        const { username, email, password } = req.body;
+        if (!username || !email || !password) {
+            res.status(400).json({
+                message: "Not found"
+            });;
+        }
+        const userAvailable = await findOneUser(email);
+        if (userAvailable) {
+            res.status(400).json({
+                message: "Email id registered"
+            });
+        }
+
+        const hashedPassword = await hashPassword(password);
+
+        const user = await createOneUser(username, email, hashedPassword);
+
+        if (user) {
+            res.status(200).json({ id: user.id, email: user.email });
+        } else {
+            res.status(400).json({
+                message: "Data not valid"
+            });
+        }
+        res.end();
+    } catch (e) {
+        console.log("🚀 ~ file: contactController.js:10 ~ getContact ~ e:", e)
     }
-    const userAvailable = await findOneUser(email);
-    if (userAvailable) {
-        res.status(400).json({
-            message: "Email id registered"
-        });
-    }
-
-    const hashedPassword = await hashPassword(password);
-
-    const user = await createOneUser(username, email, hashedPassword);
-
-    if (user) {
-        res.status(200).json({ id: user.id, email: user.email });
-    } else {
-        res.status(400).json({
-            message: "Data not valid"
-        });
-    }
-    res.end();
-
 });
 
 //@desc Users Login
@@ -43,23 +46,26 @@ const registerUser = asyncHandler(async (req, res) => {
 //@acsess public
 
 const loginUser = asyncHandler(async (req, res) => {
-    const { email, password } = req.body;
-    if (!email || !password) {
-        res.status(400).json({
-            message: "All fields are mandatory"
-        });;
-    }
-    const user = await findOneUser(email);
+    try {
+        const { email, password } = req.body;
+        if (!email || !password) {
+            res.status(400).json({
+                message: "All fields are mandatory"
+            });;
+        }
+        const user = await findOneUser(email);
 
-    if (user && await verifyPassword(password, user.password)) {
-        const accessToken = await createJwtToken(user.username,user.email,user.id);
-        res.status(200).json({ accessToken })
-    } else {
-        res.status(400).json({
-            message: "Email or Password is not valid"
-        });;
+        if (user && await verifyPassword(password, user.password)) {
+            const accessToken = await createJwtToken(user.username, user.email, user.id);
+            res.status(200).json({ accessToken })
+        } else {
+            res.status(400).json({
+                message: "Email or Password is not valid"
+            });;
+        }
+    } catch (e) {
+        console.log("🚀 ~ file: contactController.js:10 ~ getContact ~ e:", e)
     }
-
 })
 
 //@desc Get Current User Info
@@ -67,7 +73,11 @@ const loginUser = asyncHandler(async (req, res) => {
 //@acsess private
 
 const currentUser = asyncHandler(async (req, res) => {
-    res.json(req.user)
+    try {
+        res.json(req.user)
+    } catch (e) {
+        console.log("🚀 ~ file: contactController.js:10 ~ getContact ~ e:", e)
+    }
 })
 
 
